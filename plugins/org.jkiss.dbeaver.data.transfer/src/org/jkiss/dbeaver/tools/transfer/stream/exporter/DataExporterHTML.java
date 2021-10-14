@@ -41,6 +41,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
 
     private static final String PROP_HEADER = "tableHeader";
     private static final String PROP_COLUMN_HEADERS = "columnHeaders";
+    private static final String BACKGROUND_COLOR = "backgroundColor";
 
     private String name;
     private static final int IMAGE_FRAME_SIZE = 200;
@@ -50,6 +51,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
 
     private boolean outputHeader = true;
     private boolean outputColumnHeaders = true;
+    private String backgroundColor = "D0E3FA";
 
     @Override
     public void init(IStreamDataExporterSite site) throws DBException {
@@ -58,6 +60,12 @@ public class DataExporterHTML extends StreamExporterAbstract {
         Map<String, Object> properties = site.getProperties();
         outputHeader = CommonUtils.getBoolean(properties.get(PROP_HEADER), outputHeader);
         outputColumnHeaders = CommonUtils.getBoolean(properties.get(PROP_COLUMN_HEADERS), outputColumnHeaders);
+
+        String color = (String) properties.get(BACKGROUND_COLOR);
+        if (color != null) {
+            this.backgroundColor = color;
+        }
+
     }
 
     @Override
@@ -69,10 +77,11 @@ public class DataExporterHTML extends StreamExporterAbstract {
     public void exportHeader(DBCSession session) throws DBException, IOException {
         name = getSite().getSource().getName();
         columns = getSite().getAttributes();
-        printHeader();
+
+        printHeader(backgroundColor);
     }
 
-    private void printHeader() {
+    private void printHeader(String color) {
         PrintWriter out = getWriter();
         out.write("<!DOCTYPE html>\n<html>\n");
         out.write("<head>\n" +
@@ -85,7 +94,7 @@ public class DataExporterHTML extends StreamExporterAbstract {
             "border: thin solid #6495ed;" +
 //              "width: 50%;" +
             "padding: 5px;" +
-            "background-color: #D0E3FA;}" +
+            "background-color: #" + color + ";}" +
             "td{font-family: sans-serif;" +
             "border: thin solid #6495ed;" +
 //              "width: 50%;" +
